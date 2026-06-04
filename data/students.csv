@@ -1,0 +1,6 @@
+id,name,grade,department,active
+1,Alice,91,CS,true
+2,Bob,78,Math,true
+3,Carla,85,CS,false
+4,David,91,Math,true
+5,Eve,,CS,true

@@ -43,9 +43,9 @@ A lightweight CSV-based mini database system with query engine capabilities. Thi
    source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
 
-3. Install dependencies:
+3. Install the package (there are no third-party runtime dependencies):
    ```bash
-   pip install -r requirements.txt
+   pip install -e .
    ```
 
 ## Usage
@@ -63,13 +63,35 @@ db.load_table('students', 'data/students.csv')
 results = db.query("SELECT * FROM students WHERE grade > 80")
 ```
 
+Results are returned as a list of dictionaries. CSV values are automatically
+converted to integers, floats, booleans, or `None` when possible.
+
+### Command Line
+```bash
+python src/main.py --table students=data/students.csv --query "SELECT department, AVG(grade) AS average FROM students GROUP BY department"
+```
+
+Omit `--query` to start an interactive query prompt. Repeat `--table NAME=PATH`
+to load more than one table.
+
 ### Query Syntax
 The query engine supports basic SQL-like queries:
 - `SELECT`: Choose specific columns
 - `FROM`: Specify the table
 - `WHERE`: Filter conditions
 - `ORDER BY`: Sort results
-- `GROUP BY`: Group results (if implemented)
+- `GROUP BY`: Group results
+- `LIMIT`: Limit the number of returned records
+
+Supported predicates include `=`, `!=`, `<>`, `<`, `<=`, `>`, `>=`, `AND`,
+`OR`, `NOT`, `IN`, `LIKE`, `IS NULL`, and `IS NOT NULL`. Supported aggregate
+functions are `COUNT`, `SUM`, `AVG`, `MIN`, and `MAX`.
+
+### Indexes and Saving
+```python
+db.create_index("students", "id")
+db.save_table("students", "data/students-copy.csv")
+```
 
 ## Implementation Details
 - **Time Complexity**: O(n) for linear scans, O(log n) for indexed searches
@@ -79,7 +101,7 @@ The query engine supports basic SQL-like queries:
 ## Testing
 Run the test suite:
 ```bash
-python -m pytest tests/
+python -m unittest discover -s tests
 ```
 
 ## Authors
